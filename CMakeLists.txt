@@ -11,11 +11,12 @@ set(PICO_SOURCE_DIR "${CMAKE_SOURCE_DIR}/rxs_parsing_core")
 include_directories("${PICO_SOURCE_DIR}/preprocess")
 
 file(GLOB PICO_SOURCE
-  "${CMAKE_SOURCE_DIR}/*.cxx"
+  "${CMAKE_SOURCE_DIR}/src/*.cxx"
   "${PICO_SOURCE_DIR}/*.cxx"
   "${PICO_SOURCE_DIR}/preprocess/generated/*.cpp")
 
 add_library(libpico SHARED ${PICO_SOURCE})
+set_target_properties(libpico PROPERTIES PREFIX "")
 
 if(WIN32)
   set_target_properties(libpico PROPERTIES LINK_FLAGS "${CMAKE_SOURCE_DIR}/exports.def")
