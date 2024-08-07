@@ -2,7 +2,13 @@
 #include "../rxs_parsing_core/ModularPicoScenesFrame.hxx"
 #include "../rxs_parsing_core/SignalMatrix.hxx"
 
-struct ParsedCsi {
+#include <algorithm>
+#include <optional>
+
+struct LibpicoCsi {
+  // 1 word
+  int64_t returnCode;
+
   // 1 word
   uint16_t deviceType;
   uint8_t firmwareVersion;
@@ -15,30 +21,31 @@ struct ParsedCsi {
   uint64_t samplingRate;
 
   // 1 word
-  int16_t *subcarrierIndices;
-
-  // 1 word
   uint32_t subcarrierBandwidth;
-  int16_t subcarrierOffset;
-  uint16_t nTones;
+  int32_t subcarrierOffset; // int16_t
 
   // 1 word
+  uint16_t nTones;
   uint8_t nTx;
   uint8_t nRx;
   uint16_t nEss; // uint8_t
-  uint32_t nCsi; // uint16_t
+  uint16_t nCsi;
 
-  // 2 word
-  float *magnitude;
-  float *phase;
+  // 6 word
+  int16_t *subcarrierIndicesPtr;
+  int64_t subcarrierIndicesSize;
+  float *magnitudePtr;
+  int64_t magnitudeSize;
+  float *phasePtr;
+  int64_t phaseSize;
 };
 
 class PicoParser {
 public:
-  PicoParser(ModularPicoScenesRxFrame &raw);
-  auto parseCsi() -> const ParsedCsi;
+  PicoParser(const ModularPicoScenesRxFrame &raw);
+  auto getLibpicoCsi() -> LibpicoCsi;
+  int64_t test;
 
 private:
   ModularPicoScenesRxFrame raw;
-  ParsedCsi csi;
 };
