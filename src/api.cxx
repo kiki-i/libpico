@@ -1,7 +1,7 @@
 #include "api.hxx"
 
 auto getLibpicoCsiFromBuffer(const uint8_t *buffer, const uint32_t len,
-                             const bool interp = false) -> LibpicoCsi {
+                             const bool interp = true) -> LibpicoCsi {
   auto out = LibpicoCsi{};
   out.returnCode = -1;
 
@@ -17,14 +17,18 @@ auto getLibpicoCsiFromBuffer(const uint8_t *buffer, const uint32_t len,
   return out;
 }
 
-auto freeLibpicoCsi(LibpicoCsi parsedCsi) -> bool {
+auto freeLibpicoCsi(LibpicoCsi libpicoCsi) -> bool {
   try {
-    delete[] parsedCsi.subcarrierIndicesPtr;
-    parsedCsi.subcarrierIndicesPtr = nullptr;
-    delete[] parsedCsi.magnitudePtr;
-    parsedCsi.magnitudePtr = nullptr;
-    delete[] parsedCsi.phasePtr;
-    parsedCsi.phasePtr = nullptr;
+    delete[] libpicoCsi.subcarrierIndicesPtr;
+    libpicoCsi.subcarrierIndicesPtr = nullptr;
+    delete[] libpicoCsi.csiRealPtr;
+    libpicoCsi.csiRealPtr = nullptr;
+    delete[] libpicoCsi.csiImagPtr;
+    libpicoCsi.csiImagPtr = nullptr;
+    delete[] libpicoCsi.magnitudePtr;
+    libpicoCsi.magnitudePtr = nullptr;
+    delete[] libpicoCsi.phasePtr;
+    libpicoCsi.phasePtr = nullptr;
     return true;
   } catch (const std::exception &e) {
     std::cerr << "Caught an exception: " << e.what() << std::endl;

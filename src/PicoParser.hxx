@@ -31,20 +31,22 @@ struct LibpicoCsi {
   uint16_t nEss; // uint8_t
   uint16_t nCsi;
 
-  // 6 word
+  // 2 word
   int16_t *subcarrierIndicesPtr;
   int64_t subcarrierIndicesSize;
+
+  // 5 word
+  int64_t csiSize;
+  float *csiRealPtr;
+  float *csiImagPtr;
   float *magnitudePtr;
-  int64_t magnitudeSize;
   float *phasePtr;
-  int64_t phaseSize;
 };
 
 class PicoParser {
 public:
   PicoParser(const ModularPicoScenesRxFrame &raw);
   auto getLibpicoCsi() -> LibpicoCsi;
-  int64_t test;
 
 private:
   ModularPicoScenesRxFrame raw;
