@@ -35,12 +35,14 @@ struct LibpicoCsi {
   int16_t *subcarrierIndicesPtr;
   int64_t subcarrierIndicesSize;
 
-  // 5 word
-  int64_t csiSize;
+  // 7 word
   float *csiRealPtr;
   float *csiImagPtr;
+  int64_t csiSize;
   float *magnitudePtr;
+  int64_t magnitudeSize;
   float *phasePtr;
+  int64_t phaseSize;
 };
 
 class PicoParser {

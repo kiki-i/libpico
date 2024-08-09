@@ -67,7 +67,9 @@ auto PicoParser::getLibpicoCsi() -> LibpicoCsi {
   auto magnitude = vectorToPtr<float>(rawCsi->magnitudeArray.array);
   auto phase = vectorToPtr<float>(rawCsi->phaseArray.array);
   libpicoCsi.magnitudePtr = std::get<0>(magnitude);
+  libpicoCsi.magnitudeSize = std::get<1>(magnitude);
   libpicoCsi.phasePtr = std::get<0>(phase);
+  libpicoCsi.phaseSize = std::get<1>(phase);
 
   return libpicoCsi;
 }
