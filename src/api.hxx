@@ -3,11 +3,11 @@
 #if defined(_WIN32)
 #define API_EXPORT extern "C" __declspec(dllexport)
 #else
-#define API_EXPORT
+#define API_EXPORT extern "C" __attribute__((visibility("default")))
 #endif
 
-API_EXPORT LibpicoCsi getLibpicoCsiFromBuffer(const uint8_t *buffer,
-                                              const uint32_t len,
-                                              const bool interp);
+API_EXPORT auto getLibpicoCsiFromBuffer(const uint8_t *buffer,
+                                        const uint32_t len, const bool interp)
+    -> LibpicoRaw *;
 
-API_EXPORT bool freeLibpicoCsi(const LibpicoCsi parsedCsi);
+API_EXPORT auto freeLibpicoRaw(LibpicoRaw *) -> bool;

@@ -21,39 +21,116 @@ auto vectorToPtr(std::vector<T> &data) -> std::tuple<T *, int> {
   return std::make_tuple(dataPtr, size);
 };
 
-PicoParser::PicoParser(const ModularPicoScenesRxFrame &raw) {
-  this->raw = raw;
-};
+PicoParser::PicoParser(const ModularPicoScenesRxFrame &raw) : raw(raw) {};
 
-auto PicoParser::getLibpicoCsi() -> LibpicoCsi {
-  auto rawCsi = this->raw.csiSegment->getCSI();
+auto PicoParser::getLibpicoRaw(LibpicoRaw *out) -> void {
+  this->getLibpicoStandardHeader(out->standardHeader);
+  this->getLibpicoRxSBasic(out->rxSBasic);
+  this->getLibpicoRxExtraInfo(out->rxExtraInfo);
+  this->getLibpicoCsi(out->csi);
+}
 
-  LibpicoCsi libpicoCsi;
+auto PicoParser::getLibpicoStandardHeader(LibpicoStandardHeader &out) -> void {
+  const auto raw = this->raw.standardHeader;
 
-  libpicoCsi.deviceType = static_cast<uint16_t>(rawCsi->deviceType);
-  libpicoCsi.packetFormat = static_cast<int8_t>(rawCsi->packetFormat);
-  libpicoCsi.firmwareVersion = static_cast<uint8_t>(rawCsi->deviceType);
-  libpicoCsi.cbw = static_cast<uint16_t>(rawCsi->cbw);
-  libpicoCsi.antSelection = rawCsi->antSel;
+  auto &controlField = out.controlField;
 
-  libpicoCsi.carrierFreq = rawCsi->carrierFreq;
-  libpicoCsi.samplingRate = rawCsi->samplingRate;
+  controlField.version = raw.fc.version;
+  controlField.type = raw.fc.type;
+  controlField.subtype = raw.fc.subtype;
+  controlField.toDS = raw.fc.toDS;
+  controlField.fromDS = raw.fc.fromDS;
+  controlField.moreFrags = raw.fc.moreFrags;
+  controlField.retry = raw.fc.retry;
+  controlField.powerMgmt = raw.fc.power_mgmt;
+  controlField.more = raw.fc.more;
+  controlField.protect = raw.fc.protect;
+  controlField.order = raw.fc.order;
 
-  auto subcarrierIndices = vectorToPtr<int16_t>(rawCsi->subcarrierIndices);
-  libpicoCsi.subcarrierIndicesPtr = std::get<0>(subcarrierIndices);
-  libpicoCsi.subcarrierIndicesSize = std::get<1>(subcarrierIndices);
+  std::copy(raw.addr1.begin(), raw.addr1.end(), out.addr1);
+  std::copy(raw.addr2.begin(), raw.addr2.end(), out.addr2);
+  std::copy(raw.addr3.begin(), raw.addr3.end(), out.addr3);
+  out.frag = raw.frag;
+  out.seq = raw.seq;
+}
 
-  libpicoCsi.subcarrierBandwidth = rawCsi->subcarrierBandwidth;
-  libpicoCsi.subcarrierOffset = rawCsi->subcarrierOffset;
-  libpicoCsi.nTones = rawCsi->dimensions.numTones;
+auto PicoParser::getLibpicoRxSBasic(LibpicoRxSBasic &out) -> void {
+  const auto raw = this->raw.rxSBasicSegment->getBasic();
 
-  libpicoCsi.nTx = rawCsi->dimensions.numTx;
-  libpicoCsi.nRx = rawCsi->dimensions.numRx;
-  libpicoCsi.nEss = rawCsi->dimensions.numESS;
-  libpicoCsi.nCsi = rawCsi->dimensions.numCSI;
+  out.deviceType = raw.deviceType;
+  out.tstamp = raw.tstamp;
+  out.systemTime = raw.systemTime;
+  out.centerFreq = raw.centerFreq;
+  out.controlFreq = raw.controlFreq;
+  out.cbw = raw.cbw;
+  out.packetFormat = raw.packetFormat;
+  out.pktCbw = raw.pkt_cbw;
+  out.guardInterval = raw.guardInterval;
+  out.mcs = raw.mcs;
+  out.numSTS = raw.numSTS;
+  out.numESS = raw.numESS;
+  out.numRx = raw.numRx;
+  out.noiseFloor = raw.noiseFloor;
+  out.rssi = raw.rssi;
+}
 
-  auto csiVector = rawCsi->CSIArray.array;
-  libpicoCsi.csiSize = csiVector.size();
+auto PicoParser::getLibpicoRxExtraInfo(LibpicoRxExtraInfo &out) -> void {
+  const auto raw = this->raw.rxExtraInfoSegment->getExtraInfo();
+
+  out.featureCode = raw.featureCode;
+  out.length = raw.length;
+  out.version = raw.version;
+  std::copy(raw.macaddr_rom, raw.macaddr_rom + 6, out.macAddrRom);
+  std::copy(raw.macaddr_cur, raw.macaddr_cur + 6, out.macAddrCur);
+  out.channelSelect = raw.chansel;
+  out.bmode = raw.bmode;
+  std::copy(raw.evm, raw.evm + 20, out.evm);
+  out.txChainMask = raw.txChainMask;
+  out.rxChainMask = raw.rxChainMask;
+  out.txPower = raw.txpower;
+  out.cf = raw.cf;
+  out.txTsf = raw.txTSF;
+  out.lastHwTxTsf = raw.lastHwTxTSF;
+  out.channelFlags = raw.channelFlags;
+  out.txNess = raw.tx_ness;
+  out.tuningPolicy = raw.tuningPolicy;
+  out.pllRate = raw.pll_rate;
+  out.pllRefdiv = raw.pll_refdiv;
+  out.pllClockSelect = raw.pll_clock_select;
+  out.agc = raw.agc;
+  std::copy(raw.ant_sel, raw.ant_sel + 3, out.antSelect);
+  out.samplingRate = raw.samplingRate;
+  out.cfo = raw.cfo;
+  out.sfo = raw.sfo;
+}
+
+auto PicoParser::getLibpicoCsi(LibpicoCsi &out) -> void {
+  const auto raw = this->raw.csiSegment->getCSI();
+
+  out.deviceType = static_cast<uint16_t>(raw->deviceType);
+  out.packetFormat = static_cast<int8_t>(raw->packetFormat);
+  out.firmwareVersion = static_cast<uint8_t>(raw->deviceType);
+  out.cbw = static_cast<uint16_t>(raw->cbw);
+  out.antSelect = raw->antSel;
+
+  out.carrierFreq = raw->carrierFreq;
+  out.samplingRate = raw->samplingRate;
+
+  auto subcarrierIndices = vectorToPtr<int16_t>(raw->subcarrierIndices);
+  out.subcarrierIndicesPtr = std::get<0>(subcarrierIndices);
+  out.subcarrierIndicesSize = std::get<1>(subcarrierIndices);
+
+  out.subcarrierBandwidth = raw->subcarrierBandwidth;
+  out.subcarrierOffset = raw->subcarrierOffset;
+  out.nTones = raw->dimensions.numTones;
+
+  out.nTx = raw->dimensions.numTx;
+  out.nRx = raw->dimensions.numRx;
+  out.nEss = raw->dimensions.numESS;
+  out.nCsi = raw->dimensions.numCSI;
+
+  auto csiVector = raw->CSIArray.array;
+  out.csiSize = csiVector.size();
 
   auto csiRealVector = std::vector<float>();
   auto csiImagVector = std::vector<float>();
@@ -61,15 +138,13 @@ auto PicoParser::getLibpicoCsi() -> LibpicoCsi {
   auto csiReal = vectorToPtr<float>(csiRealVector);
   auto csiImag = vectorToPtr<float>(csiImagVector);
 
-  libpicoCsi.csiRealPtr = std::get<0>(csiReal);
-  libpicoCsi.csiImagPtr = std::get<0>(csiImag);
+  out.csiRealPtr = std::get<0>(csiReal);
+  out.csiImagPtr = std::get<0>(csiImag);
 
-  auto magnitude = vectorToPtr<float>(rawCsi->magnitudeArray.array);
-  auto phase = vectorToPtr<float>(rawCsi->phaseArray.array);
-  libpicoCsi.magnitudePtr = std::get<0>(magnitude);
-  libpicoCsi.magnitudeSize = std::get<1>(magnitude);
-  libpicoCsi.phasePtr = std::get<0>(phase);
-  libpicoCsi.phaseSize = std::get<1>(phase);
-
-  return libpicoCsi;
+  auto magnitude = vectorToPtr<float>(raw->magnitudeArray.array);
+  auto phase = vectorToPtr<float>(raw->phaseArray.array);
+  out.magnitudePtr = std::get<0>(magnitude);
+  out.magnitudeSize = std::get<1>(magnitude);
+  out.phasePtr = std::get<0>(phase);
+  out.phaseSize = std::get<1>(phase);
 }

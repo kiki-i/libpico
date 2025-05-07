@@ -16,4 +16,4 @@ file(GLOB PICO_SOURCE
 add_library(libpico SHARED ${PICO_SOURCE})
 set_target_properties(libpico PROPERTIES PREFIX "")
 
-target_compile_options(libpico PRIVATE -include "${PROJECT_SOURCE_DIR}/src/uglyFix.hxx")
+target_compile_options(libpico PRIVATE -include "${PROJECT_SOURCE_DIR}/src/llvmPatch.hxx")
