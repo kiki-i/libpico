@@ -16,4 +16,10 @@ file(GLOB PICO_SOURCE
 add_library(libpico SHARED ${PICO_SOURCE})
 set_target_properties(libpico PROPERTIES PREFIX "")
 
-target_compile_options(libpico PRIVATE -include "${PROJECT_SOURCE_DIR}/src/llvmPatch.hxx")
+if(NOT WIN32)
+  set(CMAKE_C_VISIBILITY_PRESET hidden)
+  set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+  set(CMAKE_VISIBILITY_INLINES_HIDDEN 1)
+endif()
+
+target_compile_options(libpico PRIVATE -include "${PROJECT_SOURCE_DIR}/src/compatiblePatch.hxx")

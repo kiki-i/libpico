@@ -2,12 +2,12 @@
 
 A dynamic link library for parsing PicoScenes data frame.
 
-## Compile
+## Build
 
 ### Toolchains
 
-* LLVM
-* MSVC/g++
+* Clang
+* MSVC / g++
 * CMake
 * Ninja
 
@@ -28,10 +28,10 @@ Changes the current directory to `libpico` and creates a new `build` folder for 
 cd libpico && mkdir build
 ```
 
-Go into the `build` directory and generate Ninja build files using Make:
+Go into the `build` directory and generate Ninja build files using CMake:
 
 ```
-cd build && make -G ninja ..
+cd build && cmake -G Ninja ..
 ```
 
 Build the project using Ninja:
@@ -45,6 +45,10 @@ ninja
 Refer to `src/api.hxx` for externed methods definition.
 
 Refer to `src/libpicoFrame.hxx` for structs definition.
+
+## Part of
+
+* [PicoScenesToolbox.py](https://github.com/kiki-i/PicoScenesToolbox.py)
 
 ## License
 
