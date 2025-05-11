@@ -1,7 +1,7 @@
 #include "api.hxx"
 
-auto getLibpicoCsiFromBuffer(const uint8_t *buffer, const uint32_t len,
-                             const bool interp = true) -> LibpicoRaw * {
+auto getLibpicoFrameFromBuffer(const uint8_t *buffer, const uint32_t len,
+                               const bool interp = true) -> LibpicoRaw * {
   auto out = new LibpicoRaw;
   out->meta.hasData = 0;
 
@@ -33,7 +33,7 @@ auto freeLibpicoCsi(LibpicoCsi libpicoCsi) -> void {
   freeArray(libpicoCsi.phasePtr);
 }
 
-auto freeLibpicoRaw(LibpicoRaw *libpicoRaw) -> bool {
+auto freeLibpicoFrame(LibpicoRaw *libpicoRaw) -> bool {
   try {
     freeLibpicoCsi(libpicoRaw->csi);
     freePtr(libpicoRaw);

@@ -6,8 +6,8 @@
 #define API_EXPORT extern "C" __attribute__((visibility("default")))
 #endif
 
-API_EXPORT auto getLibpicoCsiFromBuffer(const uint8_t *buffer,
-                                        const uint32_t len, const bool interp)
+API_EXPORT auto getLibpicoFrameFromBuffer(const uint8_t *buffer,
+                                          const uint32_t len, const bool interp)
     -> LibpicoRaw *;
 
-API_EXPORT auto freeLibpicoRaw(LibpicoRaw *) -> bool;
+API_EXPORT auto freeLibpicoFrame(LibpicoRaw *) -> bool;
