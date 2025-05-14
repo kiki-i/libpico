@@ -25,7 +25,7 @@ template <typename T> auto freeArray(T *&ptr) -> void {
   ptr = nullptr;
 }
 
-auto freeLibpicoCsi(LibpicoCsi libpicoCsi) -> void {
+auto freeLibpicoCsi(LibpicoCsi &libpicoCsi) -> void {
   freeArray(libpicoCsi.subcarrierIndicesPtr);
   freeArray(libpicoCsi.csiRealPtr);
   freeArray(libpicoCsi.csiImagPtr);
@@ -33,10 +33,10 @@ auto freeLibpicoCsi(LibpicoCsi libpicoCsi) -> void {
   freeArray(libpicoCsi.phasePtr);
 }
 
-auto freeLibpicoFrame(LibpicoRaw *libpicoRaw) -> bool {
+auto freeLibpicoFrame(LibpicoRaw *libpicoFramePtr) -> bool {
   try {
-    freeLibpicoCsi(libpicoRaw->csi);
-    freePtr(libpicoRaw);
+    freeLibpicoCsi(libpicoFramePtr->csi);
+    freePtr(libpicoFramePtr);
     return true;
   } catch (const std::exception &e) {
     throw e;

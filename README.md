@@ -16,13 +16,13 @@ A dynamic link library for parsing PicoScenes data frame.
 
 ### Step by Step
 
-Clones the libpico repository from GitHub, including submodule ([RXS-Parsing-Core](https://github.com/wifisensing/RXS-Parsing-Core)) the project depends on:
+Clone the libpico repository from GitHub, including submodule ([RXS-Parsing-Core](https://github.com/wifisensing/RXS-Parsing-Core)) the project depends on:
 
 ```
 git clone --recurse-submodules https://github.com/kiki-i/libpico.git
 ```
 
-Changes the current directory to `libpico` and creates a new `build` folder for out-of-source builds:
+Change the current directory to `libpico` and creates a new `build` folder for out-of-source builds:
 
 ```
 cd libpico && mkdir build
