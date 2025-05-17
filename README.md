@@ -31,7 +31,7 @@ cd libpico && mkdir build
 Go into the `build` directory and generate Ninja build files using CMake:
 
 ```
-cd build && cmake -G Ninja ..
+cd build && cmake -G Ninja -DCMAKE_BUILD_TYPE=Release ..
 ```
 
 Build the project using Ninja:

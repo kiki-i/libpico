@@ -4,6 +4,7 @@ project(libpico)
 set(CMAKE_CXX_COMPILER "clang++")
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -funroll-loops -DNDEBUG")
 
 set(PICO_SOURCE_DIR "${CMAKE_SOURCE_DIR}/rxs_parsing_core")
 include_directories("${PICO_SOURCE_DIR}/preprocess")
@@ -23,3 +24,8 @@ if(NOT WIN32)
 endif()
 
 target_compile_options(libpico PRIVATE -include "${PROJECT_SOURCE_DIR}/src/compatiblePatch.hxx")
+
+string(REPLACE "-nostartfiles" "" CMAKE_CXX_CREATE_SHARED_LIBRARY "${CMAKE_CXX_CREATE_SHARED_LIBRARY}")
+string(REPLACE "-nostdlib"     "" CMAKE_CXX_CREATE_SHARED_LIBRARY "${CMAKE_CXX_CREATE_SHARED_LIBRARY}")
+string(REPLACE "-nostartfiles" "" CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE}")
+string(REPLACE "-nostdlib"     "" CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE}")
