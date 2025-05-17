@@ -17,13 +17,15 @@ file(GLOB PICO_SOURCE
 add_library(libpico SHARED ${PICO_SOURCE})
 set_target_properties(libpico PROPERTIES PREFIX "")
 
-if(NOT WIN32)
+target_compile_options(libpico PRIVATE -include "${PROJECT_SOURCE_DIR}/src/compatiblePatch.hxx")
+
+if(WIN32)
+  set(CMAKE_LINKER lld-link)
+elseif(UNIX)
   set(CMAKE_C_VISIBILITY_PRESET hidden)
   set(CMAKE_CXX_VISIBILITY_PRESET hidden)
   set(CMAKE_VISIBILITY_INLINES_HIDDEN 1)
 endif()
-
-target_compile_options(libpico PRIVATE -include "${PROJECT_SOURCE_DIR}/src/compatiblePatch.hxx")
 
 string(REPLACE "-nostartfiles" "" CMAKE_CXX_CREATE_SHARED_LIBRARY "${CMAKE_CXX_CREATE_SHARED_LIBRARY}")
 string(REPLACE "-nostdlib"     "" CMAKE_CXX_CREATE_SHARED_LIBRARY "${CMAKE_CXX_CREATE_SHARED_LIBRARY}")
