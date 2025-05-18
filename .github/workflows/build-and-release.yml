@@ -1,0 +1,78 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: "recursive"
+
+      - name: Set reusable strings
+        id: strings
+        shell: bash
+        run: |
+          echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+          echo "bin-name=libpico" >> "$GITHUB_OUTPUT"
+
+      - name: Install Clang (Windows)
+        if: matrix.os == 'windows-latest'
+        uses: egor-tensin/setup-clang@v1
+
+      - name: Configure CMake
+        run: >
+          cmake -B ${{ steps.strings.outputs.build-output-dir }}
+          -S ${{ github.workspace }}
+          -G Ninja -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: ninja -C ${{ steps.strings.outputs.build-output-dir }}
+
+      - name: Rename build artifact (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          cp ${{ steps.strings.outputs.build-output-dir }}/${{ steps.strings.outputs.bin-name }}.so ./${{ steps.strings.outputs.bin-name }}.so
+
+      - name: Rename build artifact (Windows)
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          cp ${{ steps.strings.outputs.build-output-dir }}/${{ steps.strings.outputs.bin-name }}.dll ./${{ steps.strings.outputs.bin-name }}.dll
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts-${{ matrix.os }}
+          path: |
+            ./${{ steps.strings.outputs.bin-name }}.*
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          files: ./artifacts/**/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
