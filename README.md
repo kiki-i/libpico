@@ -16,25 +16,25 @@ A dynamic link library for parsing PicoScenes data frame.
 
 ### Step by Step
 
-Clone the libpico repository from GitHub, including submodule ([RXS-Parsing-Core](https://github.com/wifisensing/RXS-Parsing-Core)) the project depends on:
+1. Clone the libpico repository from GitHub, including submodule ([RXS-Parsing-Core](https://github.com/wifisensing/RXS-Parsing-Core)) the project depends on:
 
 ```
 git clone --recurse-submodules https://github.com/kiki-i/libpico.git
 ```
 
-Change the current directory to `libpico` and creates a new `build` folder for out-of-source builds:
+2. Change the current directory to `libpico` and creates a new `build` folder for builds:
 
 ```
 cd libpico && mkdir build
 ```
 
-Go into the `build` directory and generate Ninja build files using CMake:
+3. Go into the `build` directory and generate Ninja build files using CMake:
 
 ```
 cd build && cmake -G Ninja -DCMAKE_BUILD_TYPE=Release ..
 ```
 
-Build the project using Ninja:
+4. Build the project using Ninja:
 
 ```
 ninja
@@ -42,13 +42,13 @@ ninja
 
 ## Usage
 
-Refer to `src/api.hxx` for externed methods definition.
+Refer to [src/api.hxx](src/api.hxx) for externed methods definition.
 
-Refer to `src/libpicoFrame.hxx` for structs definition.
+Refer to [src/libpicoFrame.hxx](src/libpicoFrame.hxx) for data structs definition.
 
 ## Part of
 
-* [PicoScenesToolbox.py](https://github.com/kiki-i/PicoScenesToolbox.py)
+* [PicoScenesParser.py](https://github.com/kiki-i/PicoScenesParser.py)
 
 ## License
 
