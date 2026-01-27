@@ -48,7 +48,8 @@ Refer to [src/libpicoFrame.hxx](src/libpicoFrame.hxx) for data structs definitio
 
 ## Part of
 
-* [PicoScenesParser.py](https://github.com/kiki-i/PicoScenesParser.py)
+* [PicoParser.py](https://codeberg.org/kiki-i/PicoParser.py)
+* [PicoScenesParser.py](https://codeberg.org/kiki-i/PicoScenesParser.py)
 
 ## License
 
