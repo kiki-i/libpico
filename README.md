@@ -51,6 +51,10 @@ Refer to [src/libpicoFrame.hxx](src/libpicoFrame.hxx) for data structs definitio
 * [PicoParser.py](https://codeberg.org/kiki-i/PicoParser.py)
 * [PicoScenesParser.py](https://codeberg.org/kiki-i/PicoScenesParser.py)
 
+## If you find this helpful
+
+Please cite [**my works**](https://scholar.google.com/citations?user=XiudsEIAAAAJ).
+
 ## License
 
 [![LGPLv3](https://www.gnu.org/graphics/lgplv3-with-text-154x68.png)](https://www.gnu.org/licenses/agpl-3.0.html)
